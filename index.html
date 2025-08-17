@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DT100 - Professional Futures Trading System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Base Styles ===== */
+        :root {
+            --primary: #3b82f6;  /* Modern blue */
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b; /* Accent orange */
+            --accent: #8b5cf6;   /* Purple accent */
+            --success: #10b981;  /* Green for success */
+            --dark: #0f172a;     /* Dark blue */
+            --darker: #020617;
+            --light: #f1f5f9;    /* Light background */
+            --text: #e2e8f0;     /* Light text */
+            --text-dark: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--text);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover:before {
+            left: 100%;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* ===== Header ===== */
+        header {
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-link i {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link:hover i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 4px;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .dropdown-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-item:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .mobile-menu-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            padding-top: 150px;
+            padding-bottom: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 70%);
+            z-index: -1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.2);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: var(--text-dark);
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover .stat-icon {
+            transform: rotate(10deg);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-content p {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Particles Container */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -2;
+        }
+
+        /* ===== Products Section ===== */
+        .products {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            margin: 50px auto;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .products::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            animation: progress 3s infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; left: 100%; }
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title p {
+            color: var(--text-dark);
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .product-card.animate {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .product-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .product-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover .product-icon {
+            transform: scale(1.1) rotate(10deg);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .product-title {
+            font-size: 1.4rem;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 20px 0;
+            color: var(--primary);
+        }
+
+        .product-price span {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        .product-features {
+            margin: 25px 0;
+        }
+
+        .product-features ul {
+            list-style: none;
+        }
+
+        .product-features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .product-features li:hover {
+            transform: translateX(5px);
+        }
+
+        .product-features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--secondary);
+            transition: all 0.3s;
+        }
+
+        .product-features li:hover::before {
+            color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .trial-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--secondary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        /* ===== Features Section ===== */
+        .features {
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1605792657660-596af9009e82?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .feature-card.animate {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotate(-1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(10deg);
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        /* ===== Tools Section ===== */
+        .tools {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 20px;
+            padding: 50px;
+            margin: 50px auto;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .tool-card {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .tool-card.animate {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover .tool-icon {
+            transform: scale(1.3) rotate(15deg);
+            color: var(--primary);
+        }
+
+        .tool-card p {
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover p {
+            color: var(--primary);
+        }
+
+        /* ===== Payouts Section ===== */
+        .payouts {
+            position: relative;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 80px 0;
+            overflow: hidden;
+        }
+
+        .payouts::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .payout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .payout-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .payout-card.animate {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .payout-card:hover {
+            transform: translateY(-10px) rotate(-1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .payout-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .payout-card:hover .payout-amount {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .payout-platform {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .payout-text {
+            font-style: italic;
+            color: var(--text);
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .payout-card:hover .payout-text {
+            color: var(--primary);
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            background: rgba(2, 6, 23, 0.8);
+            padding: 80px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s;
+        }
+
+        .footer-col:hover h3::after {
+            width: 80px;
+        }
+
+        .footer-col p {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-dark);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px) rotate(10deg);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .products, .tools, .payouts {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                padding-top: 120px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-stats {
+                flex-direction: row;
+                gap: 20px;
+            }
+            
+            section {
+                padding: 70px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Container -->
+    <div id="particles-js"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo">DT100</a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Home</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Live Streaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-video"></i> Trading Sessions
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-calendar"></i> Schedule
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Trading Rules & Strategy <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-book"></i> DT100 Blueprint
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-chart-line"></i> Strategy Guides
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Trade Recaps</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Chat <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-comments"></i> Community Chat
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="https://discord.com/invite/4vAcA3Jw" class="dropdown-link">
+                                    <i class="fab fa-discord"></i> Discord Server
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Tools <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown">
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-book"></i> Trading Journal
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-chart-line"></i> Daily Level Up
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-brain"></i> ManifestationMaster
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a href="#" class="dropdown-link">
+                                    <i class="fas fa-network-wired"></i> Neurotrade
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <a href="https://whop.com/dts-membership/" class="btn">Dashboard</a>
+                
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content floating">
+                <span class="hero-badge">4.83 ★ Premium Trading System</span>
+                <h1>Master Futures Trading with DT100</h1>
+                <p>Join our elite community and access professional trading strategies, live sessions, and proprietary tools designed for consistent profitability.</p>
+                <a href="https://whop.com/dts-membership/" class="btn">Access Dashboard</a>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>4.83</h3>
+                            <p>Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>DT100 Trading Products</h2>
+                <p>Access our premium trading tools and resources designed for consistent profitability</p>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="product-title">DT100 Trading Blueprint</h3>
+                    </div>
+                    <div class="product-price">$49<span>/month</span></div>
+                    <div class="product-features">
+                        <ul>
+                            <li>Complete trading strategy guide</li>
+                            <li>Step-by-step entry/exit rules</li>
+                            <li>Risk management framework</li>
+                            <li>Market analysis techniques</li>
+                            <li>Access to all trading tools</li>
+                        </ul>
+                    </div>
+                    <a href="https://whop.com/dts-membership/" class="btn">Subscribe Now</a>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 class="product-title">Exclusive Trading Tools</h3>
+                    </div>
+                    <div class="product-price">$19<span>/month</span></div>
+                    <div class="trial-badge">3-day free trial</div>
+                    <div class="product-features">
+                        <ul>
+                            <li>Trading Journal</li>
+                            <li>Daily Level Up</li>
+                            <li>NeuroTrade</li>
+                            <li>ManifestationMaster</li>
+                        </ul>
+                    </div>
+                    <a href="https://whop.com/dts-membership/" class="btn">Start Free Trial</a>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-icon">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <h3 class="product-title">Trading Community</h3>
+                    </div>
+                    <div class="product-price">Free</div>
+                    <div class="product-features">
+                        <p>Join our active trading community on Discord</p>
+                    </div>
+                    <a href="https://discord.com/invite/4vAcA3Jw" class="btn btn-outline">Join Community</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Premium Membership Features</h2>
+                <p>Everything you need to transform your trading performance</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Live Trading Sessions</h3>
+                    <p>Daily live market analysis and trade executions with real-time commentary and Q&A.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Daily Trade Recaps</h3>
+                    <p>Detailed analysis of daily trades including setups, executions, and lessons learned.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-toolbox"></i>
+                    </div>
+                    <h3>24/7 Access to Trading Tools</h3>
+                    <p>Full access to our proprietary trading tools, indicators, and analytics platform.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Private Chat Support</h3>
+                    <p>Direct access to trading experts for personalized guidance and strategy reviews.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Proven Trading Strategy</h3>
+                    <p>Learn the exact DT100 trading methodology with step-by-step implementation guides.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>Continuous Updates</h3>
+                    <p>Regular strategy enhancements and tool updates based on market conditions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools">
+        <div class="container">
+            <div class="section-title">
+                <h2>Advanced Trading Tools</h2>
+                <p>Our proprietary tools designed to give you an edge in the markets</p>
+            </div>
+            
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>Trading Journal</h3>
+                    <p>Track, analyze and improve your trading performance.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Daily Level Up</h3>
+                    <p>Track habits, stay consistent, and build discipline for long-term trading success.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>ManifestationMaster</h3>
+                    <p>Manifestation is your go-to tool for visualizing and achieving your goals.</p>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>Neurotrade</h3>
+                    <p>Neuroscience-based trading performance enhancer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payouts Section -->
+    <section class="payouts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Real Payouts From Our Traders</h2>
+                <p>See what's possible with the DT100 trading system</p>
+            </div>
+            
+            <div class="payout-grid">
+                <div class="payout-card">
+                    <div class="payout-amount">+1.850,00 EUR</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"The DT100 system helped me achieve consistent profits and get funded."</p>
+                </div>
+                
+                <div class="payout-card">
+                    <div class="payout-amount">+1.300,25 EUR</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"My first payout using the DT100 strategy - more to come!"</p>
+                </div>
+                
+                <div class="payout-card">
+                    <div class="payout-amount">+1.420,50 EUR</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"Transformed my trading results with DT100's risk management techniques."</p>
+                </div>
+                
+                <div class="payout-card">
+                    <div class="payout-amount">+2.100,75 EUR</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"Achieved my biggest payout yet thanks to the DT100 community support."</p>
+                </div>
+                
+                <div class="payout-card">
+                    <div class="payout-amount">+1.750,30 EUR</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"Consistent payouts every month since implementing the DT100 system."</p>
+                </div>
+                
+                <div class="payout-card">
+                    <div class="payout-amount">Become Funded</div>
+                    <div class="payout-platform">TopstepTrader</div>
+                    <p class="payout-text">"DT100 gave me the skills to pass funding challenges consistently."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3>DT100 Trading</h3>
+                    <p>The most advanced futures trading system designed for consistent profitability in all market conditions.</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/dt_tradez/" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@dt_tradez" target="_blank">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Products</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> DT100 Trading Blueprint</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Exclusive Trading Tools</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Trading Community</a></li>
+                        <li><a href="https://whop.com/dts-membership/"><i class="fas fa-arrow-right"></i> Membership Dashboard</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Live Streaming</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Trading Rules & Strategy</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Trade Recaps</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Trading Tools</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Terms of Service</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Disclaimer</a></li>
+                        <li><a href="#"><i class="fas fa-arrow-right"></i> Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 DT100 Trading. All rights reserved.</p>
+                <p>Trading futures involves substantial risk of loss and is not suitable for all investors. Past performance is not indicative of future results.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Particles.js Initialization
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#3b82f6" },
+                shape: { 
+                    type: "circle",
+                    stroke: { width: 0, color: "#000000" },
+                    polygon: { nb_sides: 5 }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#3b82f6",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: { enable: false, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+            mobileMenuBtn.innerHTML = navMenu.style.display === 'flex' ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Header Scroll Effect
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.style.backgroundColor = 'rgba(2, 6, 23, 0.95)';
+                header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.backgroundColor = 'rgba(15, 23, 42, 0.8)';
+                header.style.boxShadow = 'none';
+            }
+        });
+        
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.product-card, .feature-card, .tool-card, .payout-card');
+            
+            elements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('animate');
+                }
+            });
+        };
+        
+        // Initial check
+        animateOnScroll();
+        
+        // Listen for scroll events
+        window.addEventListener('scroll', animateOnScroll);
+
+        // Rotating background animation
+        const rotatingBg = document.querySelector('.hero::before');
+        let rotation = 0;
+        
+        function rotateBackground() {
+            rotation += 0.2;
+            document.documentElement.style.setProperty('--rotation', `${rotation}deg`);
+            requestAnimationFrame(rotateBackground);
+        }
+        
+        rotateBackground();
+    </script>
+</body>
+</html>
